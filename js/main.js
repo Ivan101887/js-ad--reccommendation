@@ -2,6 +2,15 @@ const elemAd = document.querySelector('#Main #Ad')
 let data = [];
 getData();
 setEvent();
+function getData() {
+  const url = makeUrlStr();
+  fetch(url)
+    .then((res) => { return res.json() })
+    .then((json) => {
+      data = json;
+      render();
+    })
+}
 function makeUrlStr() {
   const cate = check();
   switch (cate) {
@@ -17,7 +26,6 @@ function makeUrlStr() {
       return '../data/normal.json'
   }
 }
-
 function check() {
   let cookieStr = document.cookie;
   if (cookieStr.includes('cate')) {
@@ -27,16 +35,6 @@ function check() {
   }
   return '';
 }
-function getData() {
-  const url = makeUrlStr();
-  fetch(url)
-    .then((res) => { return res.json() })
-    .then((json) => {
-      data = json;
-      render();
-    })
-}
-
 function setEvent() {
   elemAd.addEventListener('click', recordCate, false);
 }
@@ -47,10 +45,9 @@ function recordCate(e) {
   const self = e.target;
   const now = new Date();
   const exp = new Date(now.setDate(now.getDate() + 1));
-  
+  if (self.nodeName !== 'IMG') return;
   document.cookie = `cate = ${self.dataset.cate};expires=${exp.toUTCString()}`
 }
-
 function makeStr(str='') {
   data.forEach((item) => {
     str += `
