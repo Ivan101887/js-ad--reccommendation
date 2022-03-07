@@ -1,0 +1,80 @@
+@charset "utf-8";
+
+@import "reset";
+
+html {
+  font: {
+    size: 16px;
+    family: "Arial", "Helvetica", "微軟正黑體", "sans-serif";
+  }
+  background: {
+    color: #eee;
+  }
+}
+
+.container {
+  max-width: 800px;
+}
+
+.mx {
+  &-auto {
+    margin: {
+      left: auto;
+      right: auto;
+    }
+  }
+}
+
+.main {
+  margin: {
+    top: 8px;
+  }
+  background: {
+    color: #fff;
+  }
+  padding: 10px 15px;
+  box-sizing: border-box;
+  &__title {
+    padding: {
+      top: 10px;
+      bottom: 10px;
+    }
+    font: {
+      size: 1.5rem;
+      weight: 600;
+    }
+    line-height: 1.1em;
+  }
+  &__content {
+    padding: {
+      top: 0.58rem;
+      bottom: 0.58rem;
+    }
+    font: {
+      size: 1rem;
+    }
+    line-height: 1.43em;
+  }
+}
+
+.ad {
+  display: flex;
+  &__link {
+    display: block;
+    width: 25%;
+    margin: {
+      top: 18px;
+      bottom: 18px;
+    }
+    &+& {
+      margin: {
+        left: 15px;
+      }
+    }
+  }
+  &__img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+}
