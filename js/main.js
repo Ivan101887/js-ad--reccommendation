@@ -12,7 +12,7 @@ function getData() {
     })
 }
 function makeUrlStr() {
-  const cate = check();
+  const cate = getCateInCookie();
   switch (cate) {
     case '1':
       return '../data/technology.json'
@@ -26,11 +26,10 @@ function makeUrlStr() {
       return '../data/normal.json'
   }
 }
-function check() {
+function getCateInCookie() {
   let cookieStr = document.cookie;
   if (cookieStr.includes('cate')) {
     let pos = cookieStr.indexOf('cate');
-    console.log(cookieStr[pos+5]);
     return cookieStr[pos+5];
   }
   return '';
@@ -45,8 +44,9 @@ function recordCate(e) {
   const self = e.target;
   const now = new Date();
   const exp = new Date(now.setDate(now.getDate() + 1));
-  if (self.nodeName !== 'IMG') return;
-  document.cookie = `cate = ${self.dataset.cate};expires=${exp.toUTCString()}`
+  const isInCookie = document.cookie.includes('cate');
+  if (self.nodeName !== 'IMG' || isInCookie) return;
+  document.cookie = `cate=${self.dataset.cate};expires=${exp.toUTCString()}`
 }
 function makeStr(str='') {
   data.forEach((item) => {
