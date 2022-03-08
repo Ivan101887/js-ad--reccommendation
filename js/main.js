@@ -1,54 +1,56 @@
-const elemAd = document.querySelector('#Main #Ad')
-let data = [];
-getData();
-setEvent();
-function getData() {
-  const url = makeUrlStr();
-  fetch(url)
-    .then((res) => { return res.json() })
-    .then((json) => {
-      data = json;
-      render();
-    })
+const elemAd = document.querySelector('#Main #Ad');
+setInit();
+async function setInit() {
+  if (getCateInCookie()) {
+    if (!localStorage.getItem('cate')) {
+      return;
+    }
+    render(JSON.parse(localStorage.getItem('cate')));
+  } else {
+    console.log(await getData('../data/normal.json'))
+    render(await getData('../data/normal.json'));
+  }
+  setEvent();
 }
-function makeUrlStr() {
-  const cate = getCateInCookie();
+function makeUrlStr(cate) {
   switch (cate) {
     case '1':
-      return '../data/technology.json'
+      return '../data/technology.json';
     case '2':
-      return '../data/daily.json'
+      return '../data/daily.json';
     case '3':
-      return '../data/food.json'
+      return '../data/food.json';
     case '4':
-      return '../data/activity.json'
-    default: 
-      return '../data/normal.json'
+      return '../data/activity.json';
   }
+}
+
+async function getData(url) {
+  let res = await fetch(url);
+  let json = await res.json();
+  return json;
 }
 function getCateInCookie() {
   let cookieStr = document.cookie;
-  if (cookieStr.includes('cate')) {
-    let pos = cookieStr.indexOf('cate');
-    return cookieStr[pos+5];
-  }
-  return '';
+  return cookieStr.includes('isChoosen')
 }
 function setEvent() {
   elemAd.addEventListener('click', recordCate, false);
 }
-function render() {
-  elemAd.innerHTML = makeStr();
+function render(e) {
+  elemAd.innerHTML = makeStr(e);
 }
-function recordCate(e) {
+async function recordCate(e) {
   const self = e.target;
   const now = new Date();
   const exp = new Date(now.setDate(now.getDate() + 1));
-  const isInCookie = document.cookie.includes('cate');
+  const isInCookie = document.cookie.includes('isChoosen');
   if (self.nodeName !== 'IMG' || isInCookie) return;
-  document.cookie = `cate=${self.dataset.cate};expires=${exp.toUTCString()}`
+  let data = await getData(makeUrlStr(self.dataset.cate));
+  localStorage.setItem('cate',JSON.stringify(data));
+  document.cookie = `isChoosen=true;expires=${exp.toUTCString()}`
 }
-function makeStr(str='') {
+function makeStr(data, str = '') {
   data.forEach((item) => {
     str += `
       <a href=${item.url} class="ad__link" target="_blank" >
