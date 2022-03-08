@@ -1,15 +1,9 @@
 const elemAd = document.querySelector('#Main #Ad');
 setInit();
 async function setInit() {
-  if (getCateInCookie()) {
-    if (!localStorage.getItem('cate')) {
-      return;
-    }
-    render(JSON.parse(localStorage.getItem('cate')));
-  } else {
-    console.log(await getData('../data/normal.json'))
-    render(await getData('../data/normal.json'));
-  }
+  const data = localStorage.getItem('cate') ? localStorage.getItem('cate') : [];
+  getCateInCookie() ? render(JSON.parse(data))
+  : render(await getData('../data/normal.json'));
   setEvent();
 }
 function makeUrlStr(cate) {
@@ -24,15 +18,12 @@ function makeUrlStr(cate) {
       return '../data/activity.json';
   }
 }
-
 async function getData(url) {
-  let res = await fetch(url);
-  let json = await res.json();
-  return json;
+  const res = await fetch(url);
+  return await res.json();
 }
 function getCateInCookie() {
-  let cookieStr = document.cookie;
-  return cookieStr.includes('isChoosen')
+  return document.cookie.includes('isChoosen')
 }
 function setEvent() {
   elemAd.addEventListener('click', recordCate, false);
@@ -44,9 +35,8 @@ async function recordCate(e) {
   const self = e.target;
   const now = new Date();
   const exp = new Date(now.setDate(now.getDate() + 1));
-  const isInCookie = document.cookie.includes('isChoosen');
-  if (self.nodeName !== 'IMG' || isInCookie) return;
-  let data = await getData(makeUrlStr(self.dataset.cate));
+  if (self.nodeName !== 'IMG' || getCateInCookie()) return;
+  const data = await getData(makeUrlStr(self.dataset.cate));
   localStorage.setItem('cate',JSON.stringify(data));
   document.cookie = `isChoosen=true;expires=${exp.toUTCString()}`
 }
